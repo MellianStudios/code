@@ -68,7 +68,6 @@ class Heureka extends ThirdPartyExport implements ExportInterface
 
         $item->addChild('PRICE_VAT', round($product->retail_price_with_iva * ((100 - $product->discount) / 100)), 2);
 
-        // TODO: treba vyriesit zmysluplnost variantov
         /*$params = $item->addChild('PARAM');
 
         foreach($product->variants as $variant) {
@@ -78,7 +77,6 @@ class Heureka extends ThirdPartyExport implements ExportInterface
             $params->addChild('VAL',$variantValue);
         }*/
 
-        // TODO: otazka
         $item->addChild('MANUFACTURER', $product->suppliers->first()->name);
 
         $categories = '';
@@ -96,20 +94,17 @@ class Heureka extends ThirdPartyExport implements ExportInterface
 
         $item->addChild('CATEGORYTEXT', $categories);
 
-        // TODO: otazka
         if ($product->quantity > 0) {
             $item->addChild('DELIVERY_DATE', 3);
         } else {
             $item->addChild('DELIVERY_DATE', 0);
         }
 
-        // TODO: otazka
         $delivery = $item->addChild('DELIVERY');
         $delivery->addChild('DELIVERY_ID', 'GLS');
         $delivery->addChild('DELIVERY_PRICE', '5.9');
         $delivery->addChild('DELIVERY_PRICE_COD', '7.4');
 
-        // pretoze xml element nevie vratit vsetky child elementy
         $item_content = '';
 
         foreach ($item->children() as $child) {
