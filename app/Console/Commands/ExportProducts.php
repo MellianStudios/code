@@ -43,6 +43,7 @@ class ExportProducts extends Command
      */
     public function handle(): void
     {
+        // TODO: vyriesit do akeho priecinka pojdu exporty
         $count_per_chunk = Config::get('export.products.count_per_chunk');
 
         $product_count = Product::count();
@@ -53,18 +54,32 @@ class ExportProducts extends Command
 
         $chunk_count = (int)ceil($product_count / $count_per_chunk);
 
-        $exports = Export::where('type', 'product')->with(['options'])->get();
+        $exports = Export::where('type', 'product')
+            ->with(['options' => function ($query) {
+                $query->where('active', 1);
+            }])->get();
 
         $namespace = Config::get('export.products.namespace_of_exports');
 
         foreach ($exports as $export) {
             $current_namespace = $namespace . $export->name;
+
+            if (!class_exists($current_namespace)) {
+                ExportLog::create([
+                    'export_id' => 1,
+                    'title' => $export->name . ' not found',
+                    'status' => 'error',
+                ]);
+
+                continue;
+            }
+
             $exporter_instance = new $current_namespace();
 
             if (!is_subclass_of($exporter_instance, ThirdPartyExportAbstract::class)) {
                 ExportLog::create([
                     'export_id' => 1,
-                    'title' => $export->name . ' not found',
+                    'title' => $export->name . ' violates contract by not extending base class',
                     'status' => 'error',
                 ]);
 
