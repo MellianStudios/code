@@ -43,7 +43,6 @@ class ExportProducts extends Command
      */
     public function handle(): void
     {
-        // TODO: vyriesit do akeho priecinka pojdu exporty
         $count_per_chunk = Config::get('export.products.count_per_chunk');
 
         $product_count = Product::count();

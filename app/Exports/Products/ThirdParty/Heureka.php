@@ -6,7 +6,7 @@ use App\Exports\ExportInterface;
 use App\Models\Product;
 use Illuminate\Support\Facades\URL;
 
-class Heureka extends ThirdPartyExport implements ExportInterface
+class Heureka extends ThirdPartyExportAbstract implements ExportInterface
 {
     protected string $start_of_file = '<?xml version="1.0" encoding="utf-8"?><SHOP>';
     protected string $end_of_file = '</SHOP>';
@@ -55,7 +55,6 @@ class Heureka extends ThirdPartyExport implements ExportInterface
         $item->addChild('PRODUCT', htmlspecialchars($product->name));
         $item->addChild('DESCRIPTION', '<p>' . htmlspecialchars($product->short_description) . '</p>');
 
-        // TODO: otazka
         if ($product->categories->first() !== null) {
             $item->addChild('URL', URL::route('product.show', ['slug' => $product->categories->first()->slug, 'prod' => $product->id . '-' . $product->slug]));
         }

@@ -6,7 +6,7 @@ use App\Models\Export\ExportOption;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 
-class ThirdPartyExport
+abstract class ThirdPartyExportAbstract
 {
     protected FilesystemAdapter $storage;
     protected string $language;
@@ -77,7 +77,7 @@ class ThirdPartyExport
      *
      * @return void
      */
-    protected function createFileName(string $file_name): void
+    private function createFileName(string $file_name): void
     {
         $this->file_name = $file_name;
     }
@@ -85,7 +85,7 @@ class ThirdPartyExport
     /**
      * @return void
      */
-    protected function checkFileExistence(): void
+    private function checkFileExistence(): void
     {
         if (!$this->storage->exists($this->file_name)) {
             $this->storage->put($this->file_name, $this->start_of_file);
@@ -95,7 +95,7 @@ class ThirdPartyExport
     /**
      * @return void
      */
-    protected function refreshFileIfIsNewExport(): void
+    private function refreshFileIfIsNewExport(): void
     {
         if ($this->offset === 0) {
             $this->storage->delete($this->file_name);
